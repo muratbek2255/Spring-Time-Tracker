@@ -8,7 +8,10 @@ import com.example.userservice.User;
 import com.example.userservice.UserRepository;
 import com.example.userservice.dto.UserOrganizationRequest;
 import com.example.userservice.enumClass.ROLE;
+import com.example.userservice.event.MessagePlacedEvent;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,10 +24,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final WebClientConfig webClient;
 
+    private final KafkaTemplate<String, MessagePlacedEvent> kafkaTemplate;
+
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, WebClientConfig webClient) {
+    public UserServiceImpl(UserRepository userRepository, WebClientConfig webClient, KafkaTemplate<String, MessagePlacedEvent> kafkaTemplate) {
         this.userRepository = userRepository;
         this.webClient = webClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -90,6 +97,7 @@ public class UserServiceImpl implements UserService {
                 .retrieve()
                 .bodyToMono(OrganizationRequest.class).block();
 
+        kafkaTemplate.send("notificationTopic", new MessagePlacedEvent(user.getFirstName()));
 
         return "Add admin";
     }
@@ -106,6 +114,8 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .retrieve()
                 .bodyToMono(UserOrganizationRequest.class).block();
+
+        kafkaTemplate.send("notificationTopic", new MessagePlacedEvent(user.getLastName()));
 
         return "Send data for user-organization-service";
     }
