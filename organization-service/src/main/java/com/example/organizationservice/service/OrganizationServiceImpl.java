@@ -10,7 +10,7 @@ import com.example.organizationservice.repository.OrganizationRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -28,6 +28,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 
     @SneakyThrows
+    @Transactional
     @Override
     public String addOrganization(String firstName, String lastName) {
 
