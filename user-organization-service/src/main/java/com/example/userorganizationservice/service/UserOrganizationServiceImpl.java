@@ -6,8 +6,10 @@ import com.example.userorganizationservice.dto.UserQrCodeRequest;
 import com.example.userorganizationservice.entity.UserOrganization;
 import com.example.userorganizationservice.entity.WorkTime;
 import com.example.userorganizationservice.repository.UserOrganizationRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -53,6 +55,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     }
 
     @Override
+    @Transactional
+    @SneakyThrows
     public String addOrganizationForUserOrganization(String organizationName, int id) {
 
         UserOrganization userOrganization = userOrganizationRepository.getById(id);
@@ -65,6 +69,8 @@ public class UserOrganizationServiceImpl implements UserOrganizationService {
     }
 
     @Override
+    @Transactional
+    @SneakyThrows
     public String updateAndAddUserForUserOrganization(String firstName, String lastName, int id) {
 
         UserOrganization userOrganization = userOrganizationRepository.getById(id);
