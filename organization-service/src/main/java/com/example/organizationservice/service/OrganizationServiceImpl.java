@@ -6,9 +6,11 @@ import com.example.organizationservice.dto.OrganizationAddParentDto;
 import com.example.organizationservice.dto.OrganizationUpdateRequest;
 import com.example.organizationservice.dto.UserOrganizationRequest;
 import com.example.organizationservice.entity.Organization;
+import com.example.organizationservice.event.MessagePlacedEvent;
 import com.example.organizationservice.repository.OrganizationRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +22,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final WebClientConfig webClient;
 
+    private final KafkaTemplate<String, MessagePlacedEvent> kafkaTemplate;
+
     @Autowired
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, WebClientConfig webClient) {
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, WebClientConfig webClient, KafkaTemplate<String, MessagePlacedEvent> kafkaTemplate) {
         this.organizationRepository = organizationRepository;
         this.webClient = webClient;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
 
@@ -127,6 +132,8 @@ public class OrganizationServiceImpl implements OrganizationService {
                                 .build())
                 .retrieve()
                 .bodyToMono(UserOrganizationRequest.class).block();
+
+        kafkaTemplate.send("notificationTopic", new MessagePlacedEvent(organization.getName()));
 
         return "Send data for user-organization-service";
     }
