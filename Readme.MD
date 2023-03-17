@@ -1,5 +1,7 @@
 SPRING-TIME_TRACKER
 
+UPDATE: DOCKER NOT WORKING YET
+
 ## Documentation
 ### This project is about employee accounting when he came in, when he left with registration on microservices
 
