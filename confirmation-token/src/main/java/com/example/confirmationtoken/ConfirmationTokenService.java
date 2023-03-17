@@ -1,10 +1,10 @@
 package com.example.confirmationtoken;
 
 
-import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -25,6 +25,7 @@ public class ConfirmationTokenService {
     }
 
     @SneakyThrows
+    @Transactional
     public ConfirmationResponse saveTokenConformation(Integer userId, String email) {
 
         String randomToken = UUID.randomUUID().toString();
